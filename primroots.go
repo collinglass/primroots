@@ -7,13 +7,13 @@ import (
 
 type floatSlice []float64
 
-func (slice floatSlice) pos(value float64) float64 {
-	for _, v := range slice {
+func (slice floatSlice) pos(value float64) int {
+	for k, v := range slice {
 		if v == value {
-			return 1.0
+			return k
 		}
 	}
-	return -1.0
+	return -1
 }
 
 func gcd(a, b float64) float64 {
@@ -34,24 +34,26 @@ func main() {
 	for x := 2.0; x < a; x++ {
 		if gcd(x, a) == 1.0 {
 			result := make(floatSlice, 1, 81)
-			for y := 0.0; y < a; y++ {
+			result[0] = 1
+			r := 1.0
+
+			for y := 1.0; y < a; y++ {
+				r = math.Mod(r*x, a)
+				// length of result is > 54 its not a primitive root
 				if len(result) > b {
 					break
 				}
 
-				modster := math.Mod(math.Pow(x, y), a)
-				if result.pos(modster) != -1.0 {
+				// if (x**y mod a) is already in result than it's not a primitive root
+				if result.pos(r) != -1 {
 					break
 				}
-				// length of result is > 54 its not a primitive root
-				// if modster is already in result than it's not a primitive root
-				result = append(result, math.Mod(math.Pow(x, y), a))
-			}
+				result = append(result, r)
 
-			if len(result) == b {
-				fmt.Printf("Primitive Root: %v \n", x)
+				if len(result) == b {
+					fmt.Printf("Primitive Root: %v \n", x)
+				}
 			}
-
 		}
 
 	}
